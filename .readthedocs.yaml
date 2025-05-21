@@ -1,0 +1,19 @@
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
+
+version: 2  # Required
+
+# Set the OS, Python version, and tools
+build:
+  os: ubuntu-22.04  # Use LTS version supported by Read the Docs
+  tools:
+    python: "3.10"  # Python 3.13 is not stable/supported yet
+
+# Python dependencies for building the docs
+python:
+  install:
+    - requirements: docs/requirements.txt
+
+# Sphinx configuration
+sphinx:
+  configuration: docs/conf.py
