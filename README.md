@@ -2,83 +2,61 @@
 
 # 🌬️ Wind Turbine Generator Predictive Maintenance Model
 
-> ⚠️ **Note:** This model is based on a MATLAB Simulink example provided by MathWorks. It is used **strictly for educational purposes**.
+## 🔧 Development Progress & Observed Failures
 
-## 📁 Project Files
+During the development of the wind turbine predictive maintenance model, we encountered multiple issues and behaviors that helped us refine the system step by step. The following scopes visualize the simulation outputs at different stages, highlighting failures and diagnostic insights.
 
-* `Wind_Turbine.prj` — Main project file to initialize the workspace and set up paths.
-* `Wind_Turbine.slx` — Simulink model of the wind turbine.
-* `Wind_Turbine_Requirements.docx` — System-level documentation and requirements.
-* `signal_data1.csv` — Exported signal data from simulations.
+### 📊 Simulink Scopes Output
 
----
-
-## 🔧 How to Use
-
-1. Open `Wind_Turbine.prj` in MATLAB to initialize paths and environment.
-2. Run the `Wind_Turbine_Demo_Script.html` to explore different parts of the simulation.
-3. Modify environmental inputs (e.g., temperature, humidity, load cycles) to simulate wear and tear.
-4. Observe failure conditions via scopes and sensor blocks within the Simulink model.
+![Simulation Scopes Overview](./images/scopes_snapshot.png)
 
 ---
 
-## ⚙️ Valid Configuration Notes
+### 🌀 Rotor Speed Panel
 
-Some configurations are not valid and may cause runtime errors. Please ensure you use the following valid combinations:
-
-| Turbine Input | Main Controller | Blade Loads             | Pitch Controller | Command Type        |
-| ------------- | --------------- | ----------------------- | ---------------- | ------------------- |
-| Inner Loop    | All             | Wind Input (not Torque) | On AoA           | Direct Input Torque |
-
-> 🔄 The model `Wind_Turbine_Flexible_Blades.slx` is proof-of-concept only and is not integrated with `Wind_Turbine.slx`.
+- **Observation:** Rotor speed fluctuated slightly around a constant nominal value (~1400 rpm).
+- **Interpretation:** Speed feedback and actuator control loops were stable, but minor noise was present.
+- **Fix Applied:** Fine-tuned the actuator gain and ensured correct scaling from rad/s to pu.
 
 ---
 
-## 📉 Simulation Outputs & Failure Analysis
+### ⚡ Electromagnetic Torque (Te)
 
-This simulation logs several operational parameters:
-
-* Rotor speed
-* Electromagnetic torque
-* Vibration (RMS, kurtosis, crest factor)
-* Degradation accumulation
-* Environmental conditions (Temperature, Humidity)
-
-Below are some of the failure behaviors encountered during development:
-
-### 🌀 Rotor Speed Stability
-
-![Rotor Speed Scope](./images/469f8cdb-5c38-413b-b279-61323549d15a.png)
-
-> Rotor speed remains mostly stable, but occasional minor dips were observed due to actuator torque delay and incorrect cycle factor adjustment.
+- **Observation:** Torque signal exhibited abrupt drops and rises during some simulation phases.
+- **Issue:** Caused by mismatch between torque actuator dynamics and generator response.
+- **Fix:** We introduced damping via the `Actuator Dynamics` block to smooth out the torque input.
 
 ---
 
-### ⚡ Electromagnetic Torque Fluctuations
+### 🛠️ Degradation Growth
 
-![Electromagnetic Torque Scope](./images/ad90c1fd-568a-473d-98eb-49b912c8c819.png)
-
-> Unexpected null torque in extended periods due to incorrect torque actuator dynamics. This led to energy inefficiency and poor vibration responses.
-
----
-
-### 🛠️ Degradation Growth Over Time
-
-![Degradation Scope](./images/754ff2ce-16e3-4b0c-a4de-e658699e241b.png)
-
-> Gradual accumulation of degradation was observed, driven by temperature and humidity stressors. Failure to reset or cycle this factor caused rapid wear in long runs.
+- **Observation:** Steady increase in degradation values over time.
+- **Success:** This validated the effectiveness of our degradation model based on torque, vibration, and environmental data.
+- **Usage:** These values feed into the predictive maintenance model to estimate component health.
 
 ---
 
-## 📦 Features
+### 🔁 Gearbox Output (Unexpected Behavior)
 
-* Environmental degradation modeling via `tempData` and `humidityData`
-* Sensor-based condition monitoring (vibration, torque, speed)
-* Predictive maintenance metric output to CSV
-* Custom MATLAB Function Block for degradation modeling
-* Real-time signal plotting and export-ready analysis
+- **Observation:** Large flatline at zero — no expected gear output.
+- **Issue:** Misconfigured signal connection between torque input and gearbox subsystem.
+- **Action Taken:** Rewired the gearbox output and rerouted torque after confirming dynamic consistency.
 
 ---
+
+### 📈 Vibration RMS & Statistical Metrics
+
+- **Observation:** Vibration RMS and kurtosis showed sporadic spikes.
+- **Insight:** These spikes were simulated fault injections or reflect instability from misaligned rotor/generator coupling.
+- **Response:** Implemented `generator_vibration_sensor` to capture these characteristics and improve feature extraction for fault classification.
+
+---
+
+### ✅ Final Note
+
+Each anomaly helped us uncover a modeling or signal routing flaw. By resolving them, the model evolved into a more accurate and reliable predictive maintenance simulator.
+
+> ⚠️ *Note:* All scope signals shown above are time-based samples with simulation time T=100000.
 
 ## 📈 Potential Improvements
 
