@@ -1,6 +1,6 @@
-# **Wind Turbine Model**
+# **Wind Turbine Generator Predictive Maintenance Model**
 Copyright 2009-2020 The MathWorks(TM), Inc.
-
+(WE DO NOT OWN THE BASE MATLAB MODEL OF THIS PROJECT,IT IS BEING USED FOR EDUCATIONAL PURPOSE)
 [![View Wind Turbine Model on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/25752-wind-turbine-model)
 
 Open project "Wind_Turbine.prj" to set the path and load key values.
@@ -11,7 +11,7 @@ Please note:
 
 2. Some configurations are invalid.  
    Turbine Inputs, Blade Loads, Main Controller, and Pitch Controller must be compatible
-
+	
 	Valid combinations:	
 	Turbine Inputs	Main Controller	Blade Loads	Pitch Controller
 	Commands	Direct Input	Torque		Inner Loop
