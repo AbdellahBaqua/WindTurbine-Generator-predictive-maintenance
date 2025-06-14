@@ -98,7 +98,7 @@ sys.path.insert(0, os.path.abspath('..'))
 autodoc_mock_imports = [
     'numpy',
     'pandas',
-    'sklearn',
+    'scikit-learn',
     'tensorflow',
     'torch',
     'streamlit',
@@ -111,3 +111,6 @@ nitpicky = False
 # Add these to help with toctree issues
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+# Autosummary configuration
+autosummary_generate = True
