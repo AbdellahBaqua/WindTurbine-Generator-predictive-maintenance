@@ -1,6 +1,14 @@
 API Reference
 ============
 
+.. currentmodule:: forecast.utils
+
+.. autosummary::
+   :toctree: _autosummary
+   :template: module.rst
+
+   load_data
+
 .. currentmodule:: Dashboard_App.app
 
 .. autosummary::
@@ -12,12 +20,4 @@ API Reference
    load_model
    predict
    inverse_transform
-   plot_forecast
-
-.. currentmodule:: forecast.utils
-
-.. autosummary::
-   :toctree: _autosummary
-   :template: module.rst
-
-   load_data 
+   plot_forecast 

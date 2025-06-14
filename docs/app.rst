@@ -14,26 +14,55 @@ Key Features
 * Interactive visualizations
 * Predictive maintenance alerts
 
-API Reference
-------------
+Functions
+---------
 
-.. autofunction:: load_data
-   :noindex:
+.. _Dashboard_App_load_data:
 
-.. autofunction:: preprocess_data
-   :noindex:
+``load_data(uploaded_file, timestamp_col="time")``
+   Loads data from an uploaded CSV file, optionally parsing a timestamp column.
 
-.. autofunction:: load_model
-   :noindex:
+   :param uploaded_file: The file-like object from Streamlit's file_uploader.
+   :type uploaded_file: file
+   :param timestamp_col: The name of the timestamp column in the CSV. Defaults to "time".
+   :type timestamp_col: str, optional
+   :returns: Loaded data as a pandas DataFrame, or None if an error occurs.
+   :rtype: pandas.DataFrame or None
 
-.. autofunction:: predict
-   :noindex:
+.. _Dashboard_App_preprocess_data:
 
-.. autofunction:: inverse_transform
-   :noindex:
+``preprocess_data()``
+   (Add your description here)
 
-.. autofunction:: plot_forecast
-   :noindex:
+   (Add parameters, returns, and raises if applicable)
+
+.. _Dashboard_App_load_model:
+
+``load_model()``
+   (Add your description here)
+
+   (Add parameters, returns, and raises if applicable)
+
+.. _Dashboard_App_predict:
+
+``predict()``
+   (Add your description here)
+
+   (Add parameters, returns, and raises if applicable)
+
+.. _Dashboard_App_inverse_transform:
+
+``inverse_transform()``
+   (Add your description here)
+
+   (Add parameters, returns, and raises if applicable)
+
+.. _Dashboard_App_plot_forecast:
+
+``plot_forecast()``
+   (Add your description here)
+
+   (Add parameters, returns, and raises if applicable)
 
 Code Structure
 -------------
