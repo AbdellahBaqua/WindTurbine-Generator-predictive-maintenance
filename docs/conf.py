@@ -4,30 +4,71 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
 project = 'Controlit'
 copyright = '2025, Controlit'
 author = 'Hachimboua BaquaAbdellah'
-release = 'today'
+
+# The full version, including alpha/beta/rc tags
+release = '1.0.0'
+version = '1.0'
 
 # -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+extensions = [
+    'myst_parser',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon'  # For Google-style docstrings
+]
 
-extensions = ['myst_parser']
+# Source file handling
 source_suffix = {
     '.rst': 'restructuredtext',
     '.md': 'markdown',
 }
 
+# List of patterns to ignore
+exclude_patterns = [
+    '_build',
+    'Thumbs.db',
+    '.DS_Store',
+    'venv',
+    'README.md'
+]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
-
+# -- Internationalization configuration ----------------------------------------
+language = 'en'
+locale_dirs = ['locale/']  # For translations if needed
 
 # -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'  # Recommended alternative to alabaster
 html_static_path = ['_static']
+html_logo = '_static/logo.png'  # If you have a logo
+html_favicon = '_static/favicon.ico'
+
+# Theme-specific options
+html_theme_options = {
+    'navigation_depth': 4,
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'includehidden': True,
+    'titles_only': False
+}
+
+# -- Extension settings -----------------------------------------------------
+# MyST Parser settings
+myst_enable_extensions = [
+    "colon_fence",
+    "deflist",
+    "dollarmath",
+    "html_image",
+]
+myst_heading_anchors = 3
+
+# Autodoc settings
+autodoc_default_options = {
+    'members': True,
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'exclude-members': '__weakref__'
+}
