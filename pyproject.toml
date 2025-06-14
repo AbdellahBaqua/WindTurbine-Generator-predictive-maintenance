@@ -17,4 +17,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
+packages = ["app", "forecast"]
+
+[tool.setuptools]
 packages = ["app"]  # Remove "forecast" if it doesn't exist 
