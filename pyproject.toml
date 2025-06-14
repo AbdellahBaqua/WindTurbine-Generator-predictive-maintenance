@@ -17,4 +17,4 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["app", "forecast"]  # Add your package names here 
+packages = ["app"]  # Remove "forecast" if it doesn't exist 
