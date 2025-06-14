@@ -4,7 +4,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os;
 import sys;
-sys.setrecursionlimit(1500)
+sys.setrecursionlimit(2000)
 sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 project = 'Controlit'
@@ -75,3 +75,34 @@ autodoc_default_options = {
     'undoc-members': True,
     'exclude-members': '__weakref__'
 }
+
+# Enable parallel builds
+parallel_read_safe = True
+parallel_write_safe = True
+
+# Enable caching
+html_copy_source = False
+html_show_sourcelink = False
+
+# Optimize build performance
+nitpicky = False  # Only set to True if you want to be strict about warnings
+
+# Add these settings to help with module imports
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))  # Add project root to Python path
+
+# Configure autodoc
+autodoc_mock_imports = [
+    'numpy',
+    'pandas',
+    'sklearn',
+    'tensorflow',
+    'torch',
+    'streamlit',
+    'plotly',
+    # Add other external dependencies your project uses
+]
+
+# Disable nitpicky mode to reduce warnings
+nitpicky = False
