@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "windturbine-generator-predictive-maintenance"
+version = "0.1.0"
+description = "Wind Turbine Generator Predictive Maintenance Project"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "streamlit",
+    "plotly",
+    # Add other dependencies your project needs
+]
+
+[tool.setuptools]
+packages = ["app", "forecast"]  # Add your package names here 
