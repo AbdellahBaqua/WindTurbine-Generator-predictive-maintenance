@@ -1,12 +1,12 @@
-.. Predictive Maintenance AI Dashboard documentation master file, created by
+.. Wind Turbine Generator Predictive Maintenance documentation master file, created by
    sphinx-quickstart on <date>.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Predictive Maintenance AI Dashboard's documentation!
-==============================================================
+Welcome to Wind Turbine Generator Predictive Maintenance's documentation!
+=======================================================================
 
-This documentation provides comprehensive details on the Predictive Maintenance AI Dashboard,
+This documentation provides comprehensive details on the Wind Turbine Generator Predictive Maintenance system,
 a Streamlit application for forecasting component health and Remaining Useful Life (RUL)
 using deep learning models.
 

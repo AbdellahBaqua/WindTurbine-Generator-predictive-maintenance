@@ -10,7 +10,11 @@ sys.setrecursionlimit(2000) # You can try a higher number like 3000 if 2000 isn'
 sys.path.insert(0, os.path.abspath('..')) # Path to your project root (parent of docs)
 sys.path.insert(0, os.path.abspath('../Dashboard_App')) # Path directly to Dashboard_App
 
-# ... (rest of your conf.py) ...
+# -- Project information -----------------------------------------------------
+project = 'Wind Turbine Generator Predictive Maintenance'
+copyright = '2024, BaquaAbdellah & HachimBoua'
+author = 'BaquaAbdellah & HachimBoua'
+release = '1.0.0'
 
 # Ensure autodoc is enabled
 extensions = [
@@ -20,8 +24,6 @@ extensions = [
     'sphinx.ext.autosummary',
     'myst_parser',
 ]
-
-# ... (rest of your conf.py) ...
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
