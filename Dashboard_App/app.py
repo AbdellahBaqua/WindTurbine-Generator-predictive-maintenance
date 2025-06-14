@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 import numpy as np
 import torch
@@ -10,97 +11,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
-# Define a variable to control Streamlit UI execution
-_BUILDING_DOCS = os.environ.get("READTHEDOCS") == "True"
+# 1. APP CONFIGURATION
+st.set_page_config(page_title="Direct Forecast Dashboard", page_icon="⚡", layout="wide")
 
-# Conditional import of Streamlit
-if not _BUILDING_DOCS:
-    try:
-        import streamlit as st
-    except ImportError:
-        # Fallback for local development if Streamlit isn't installed
-        class MockStreamlit:
-            # Add all st functions you use in your app that need to be mocked
-            def set_page_config(self, *args, **kwargs): pass
-            def title(self, *args, **kwargs): pass
-            def write(self, *args, **kwargs): pass
-            def sidebar(self): return self
-            def columns(self, *args, **kwargs): return [self] * len(args)
-            def empty(self): return self
-            def pyplot(self, *args, **kwargs): pass
-            def cache_resource(self, func): return func
-            def cache_data(self, func): return func
-            def file_uploader(self, *args, **kwargs): return None
-            def selectbox(self, *args, **kwargs): return "Welcome" # Default value for selectbox
-            def markdown(self, *args, **kwargs): pass
-            def info(self, *args, **kwargs): pass
-            def header(self, *args, **kwargs): pass
-            def subheader(self, *args, **kwargs): pass
-            def container(self, *args, **kwargs): return self # Mock for st.container
-            def button(self, *args, **kwargs): return False
-            def number_input(self, *args, **kwargs): return 50 # Default value for number_input
-            def session_state(self): return {} # Mock for session_state
-            def download_button(self, *args, **kwargs): pass
-            def slider(self, *args, **kwargs): return 0
-            def multiselect(self, *args, **kwargs): return []
-            def spinner(self, *args, **kwargs): # Mock for st.spinner context manager
-                class MockSpinner:
-                    def __enter__(self): return self
-                    def __exit__(self, exc_type, exc_val, exc_tb): pass
-                return MockSpinner()
-            def success(self, *args, **kwargs): pass
-            def metric(self, *args, **kwargs): pass
-            def warning(self, *args, **kwargs): pass
-            def error(self, *args, **kwargs): pass
-            def dataframe(self, *args, **kwargs): pass
-            def plotly_chart(self, *args, **kwargs): pass
-            # Add other st functions as needed based on your script
-            
-        st = MockStreamlit()
-else:
-    # When building docs, create a mock for 'st' to prevent AttributeErrors
-    # for autodoc without importing the actual streamlit library.
-    class MockStreamlit:
-        # Add all st functions you use in your app that need to be mocked
-        def set_page_config(self, *args, **kwargs): pass
-        def title(self, *args, **kwargs): pass
-        def write(self, *args, **kwargs): pass
-        def sidebar(self): return self
-        def columns(self, *args, **kwargs): return [self] * len(args)
-        def empty(self): return self
-        def pyplot(self, *args, **kwargs): pass
-        def cache_resource(self, func): return func
-        def cache_data(self, func): return func
-        def file_uploader(self, *args, **kwargs): return None
-        def selectbox(self, *args, **kwargs): return "Welcome" # Default value for selectbox
-        def markdown(self, *args, **kwargs): pass
-        def info(self, *args, **kwargs): pass
-        def header(self, *args, **kwargs): pass
-        def subheader(self, *args, **kwargs): pass
-        def container(self, *args, **kwargs): return self # Mock for st.container
-        def button(self, *args, **kwargs): return False
-        def number_input(self, *args, **kwargs): return 50 # Default value for number_input
-        def session_state(self): return {} # Mock for session_state
-        def download_button(self, *args, **kwargs): pass
-        def slider(self, *args, **kwargs): return 0
-        def multiselect(self, *args, **kwargs): return []
-        def spinner(self, *args, **kwargs): # Mock for st.spinner context manager
-            class MockSpinner:
-                def __enter__(self): return self
-                def __exit__(self, exc_type, exc_val, exc_tb): pass
-            return MockSpinner()
-        def success(self, *args, **kwargs): pass
-        def metric(self, *args, **kwargs): pass
-        def warning(self, *args, **kwargs): pass
-        def error(self, *args, **kwargs): pass
-        def dataframe(self, *args, **kwargs): pass
-        def plotly_chart(self, *args, **kwargs): pass
-
-    st = MockStreamlit()
-
-
-# 2. CONFIG & MODEL DEFINITIONS (KEEP THESE AT TOP LEVEL)
-# These are definitions, not Streamlit calls.
+# 2. CONFIG & MODEL DEFINITIONS
 
 # --- General Model Configuration ---
 MODEL_CONFIG = {
@@ -125,6 +39,7 @@ MODEL_CONFIG = {
 MODEL_CONFIG["output_size"] = len(MODEL_CONFIG["target_columns"]) * MODEL_CONFIG["future_steps"]
 
 # --- Model Architectures ---
+
 class BiLSTMModel(nn.Module):
     """A Bidirectional LSTM model for direct forecasting."""
     def __init__(self, input_size, hidden_size, num_layers, output_size, dropout, **kwargs):
@@ -171,7 +86,6 @@ MODELS_AVAILABLE = {
 }
 
 # 3. DATA PREPARATION HELPERS (FOR TRAINING)
-# These are functions, not Streamlit calls.
 
 def create_direct_sequences(data, target_column_indices, window_size, future_steps):
     """Creates sequences where X is the history and y is the entire future trajectory, flattened."""
@@ -195,24 +109,20 @@ class TimeSeriesDataset(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
 
-# 4. CORE TRAINING FUNCTION (CONTAINS Streamlit calls, so needs to be adapted or mocked)
-# IMPORTANT: Any st.write/st.success/st.error calls inside this function
-# need to check if _BUILDING_DOCS is True or they will try to use the mock object.
-# The MockStreamlit class should have methods for all these calls.
+# 4. CORE TRAINING FUNCTION
+
 def run_training(model_class, df_train, config):
     """
     Orchestrates the model training process from start to finish.
     Returns the best model state dictionary and the fitted scaler.
     """
     try:
-        # Check if Streamlit is active before making UI calls
-        if not _BUILDING_DOCS:
-            st.write("### Step 1: Preprocessing data and fitting scaler...")
+        # Step 1: Preprocessing and Scaling
+        st.write("### Step 1: Preprocessing data and fitting scaler...")
         scaler = StandardScaler()
         df_numeric = df_train.select_dtypes(include=np.number)
         scaled_data = scaler.fit_transform(df_numeric)
-        if not _BUILDING_DOCS:
-            st.success(f"Scaler fitted successfully on {len(scaler.feature_names_in_)} features.")
+        st.success(f"Scaler fitted successfully on {len(scaler.feature_names_in_)} features.")
 
         # Step 2: Create Sequences
         st.write("### Step 2: Creating training sequences...")
@@ -273,23 +183,17 @@ def run_training(model_class, df_train, config):
         return best_model_state, scaler
 
     except Exception as e:
-        if not _BUILDING_DOCS:
-            st.error(f"An error occurred during training: {e}")
-        else:
-            print(f"An error occurred during training (docs build): {e}")
+        st.error(f"An error occurred during training: {e}")
         return None, None
 
 
 # 5. CACHED HELPER FUNCTIONS (FOR FORECASTING)
-# Decorators @st.cache_resource and @st.cache_data will work with the MockStreamlit.
-# However, any internal st. calls (like st.sidebar.error) need the _BUILDING_DOCS check.
 
 @st.cache_resource
 def load_model_and_scaler(model_path, scaler_path, model_class, config):
     """Loads a model and scaler for forecasting."""
     if not os.path.exists(model_path) or not os.path.exists(scaler_path):
-        if not _BUILDING_DOCS:
-            st.sidebar.error(f"Model ({model_path}) or scaler not found.")
+        st.sidebar.error(f"Model ({model_path}) or scaler not found.")
         return None, None
     scaler = joblib.load(scaler_path)
     model_constructor_config = {"input_size": len(scaler.feature_names_in_), **config}
@@ -297,8 +201,7 @@ def load_model_and_scaler(model_path, scaler_path, model_class, config):
     try:
         model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     except RuntimeError as e:
-        if not _BUILDING_DOCS:
-            st.error(f"Error loading model state. Architecture may not match. Details: {e}")
+        st.error(f"Error loading model state. Architecture may not match. Details: {e}")
         return None, None
     model.eval()
     return model, scaler
@@ -313,12 +216,11 @@ def load_data(uploaded_file, timestamp_col="time"): # Default to "time"
             df.set_index(timestamp_col, inplace=True)
         return df
     except Exception as e:
-        if not _BUILDING_DOCS:
-            st.error(f"Error loading or parsing data: {e}")
+        st.error(f"Error loading or parsing data: {e}")
         return None
 
 
-# 6. CORE FORECASTING FUNCTION (NO STREAMLIT CALLS, KEEP AS IS)
+# 6. CORE FORECASTING FUNCTION
 
 def run_direct_forecast(model, scaler, history_window_df, config):
     """Runs a forecast using a loaded model and scaler."""
@@ -339,327 +241,313 @@ def run_direct_forecast(model, scaler, history_window_df, config):
     
     return pd.DataFrame(prediction_unscaled[:, target_indices], columns=config["target_columns"])
 
+# 7. STREAMLIT UI
 
-# 7. ALL STREAMLIT UI CODE MUST BE INSIDE THIS FUNCTION
-def run_streamlit_app():
-    if not _BUILDING_DOCS: # This is the critical check for the entire UI
-        # This MUST be the very first Streamlit command in this function
-        st.set_page_config(page_title="Direct Forecast Dashboard", page_icon="⚡", layout="wide")
-        
-        # --- Move ALL your Streamlit UI code here ---
-        # Starting from st.sidebar.title("Dashboard Controls")
-        # And all the if/elif/else blocks for your pages
+st.sidebar.title("Dashboard Controls")
+page = st.sidebar.selectbox("Choose a Page", ["Welcome", "Live RUL Prediction", "Component Health Forecasting", "Model Training"])
 
-        st.sidebar.title("Dashboard Controls")
-        page = st.sidebar.selectbox("Choose a Page", ["Welcome", "Live RUL Prediction", "Component Health Forecasting", "Model Training"])
+# --- Welcome Page ---
+if page == "Welcome":
+    st.title("⚡ Welcome to the Direct Forecast Dashboard!")
+    st.markdown("This application allows you to **forecast component health**, determine **Remaining Useful Life (RUL)**, and **re-train predictive models** on your own data.")
+    st.markdown("---")
 
-        # --- Welcome Page ---
-        if page == "Welcome":
-            st.title("⚡ Welcome to the Direct Forecast Dashboard!")
-            st.markdown("This application allows you to **forecast component health**, determine **Remaining Useful Life (RUL)**, and **re-train predictive models** on your own data.")
-            st.markdown("---")
-
-            with st.container(border=True):
-                st.header("🏁 Get Started in 3 Steps")
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.markdown("#### 1. Select a Page")
-                    st.markdown("Use the dropdown in the sidebar to navigate between forecasting and training pages.")
-                with col2:
-                    st.markdown("#### 2. Choose a Model")
-                    st.markdown("Select a model architecture (`BiLSTM`, `BiGRU`, etc.) from the sidebar.")
-                with col3:
-                    st.markdown("#### 3. Upload Your Data")
-                    st.markdown("Provide your historical component data as a CSV file to run a forecast or start training.")
-            
-            st.markdown("---")
-            
-            st.header("⚙️ How It Works")
-            colA, colB = st.columns(2)
-            with colA:
-                with st.container(border=True):
-                    st.subheader("🔮 Forecasting")
-                    st.markdown("- **Live RUL Prediction:** Forecasts a component's degradation to predict its end-of-life in operating hours.")
-                    st.markdown("- **Component Health Forecasting:** Provides future trajectories for multiple health indicators at once.")
-            with colB:
-                with st.container(border=True):
-                    st.subheader("🏋️ Model Training")
-                    st.markdown("- Upload your own time-series data.")
-                    st.markdown("- Configure hyperparameters like epochs and learning rate.")
-                    st.markdown("- Train a new model and download the resulting model (`.pth`) and scaler (`.joblib`) files to use locally.")
-            
-            st.info("To begin, select a page from the sidebar menu.", icon="👈")
+    with st.container(border=True):
+        st.header("🏁 Get Started in 3 Steps")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown("#### 1. Select a Page")
+            st.markdown("Use the dropdown in the sidebar to navigate between forecasting and training pages.")
+        with col2:
+            st.markdown("#### 2. Choose a Model")
+            st.markdown("Select a model architecture (`BiLSTM`, `BiGRU`, etc.) from the sidebar.")
+        with col3:
+            st.markdown("#### 3. Upload Your Data")
+            st.markdown("Provide your historical component data as a CSV file to run a forecast or start training.")
+    
+    st.markdown("---")
+    
+    st.header("⚙️ How It Works")
+    colA, colB = st.columns(2)
+    with colA:
+        with st.container(border=True):
+            st.subheader("🔮 Forecasting")
+            st.markdown("- **Live RUL Prediction:** Forecasts a component's degradation to predict its end-of-life in operating hours.")
+            st.markdown("- **Component Health Forecasting:** Provides future trajectories for multiple health indicators at once.")
+    with colB:
+        with st.container(border=True):
+            st.subheader("🏋️ Model Training")
+            st.markdown("- Upload your own time-series data.")
+            st.markdown("- Configure hyperparameters like epochs and learning rate.")
+            st.markdown("- Train a new model and download the resulting model (`.pth`) and scaler (`.joblib`) files to use locally.")
+    
+    st.info("To begin, select a page from the sidebar menu.", icon="👈")
 
 
-        # --- Model Training Page ---
-        elif page == "Model Training":
-            st.title("🏋️ Model Training")
-            st.markdown("Re-train a model on your own data. After training, you can download the new model and data scaler files to your local machine.")
-            
-            st.sidebar.header("Training Parameters")
-            model_choice_train = st.sidebar.selectbox("Choose Model Architecture", options=list(MODELS_AVAILABLE.keys()), key="train_model_choice")
-            
-            MODEL_CONFIG["num_epochs"] = st.sidebar.number_input("Number of Epochs", min_value=1, max_value=1000, value=50)
-            MODEL_CONFIG["learning_rate"] = st.sidebar.number_input("Learning Rate", min_value=1e-6, value=0.001, format="%.5f")
-            MODEL_CONFIG["batch_size"] = st.sidebar.number_input("Batch Size", min_value=1, value=32)
-            
-            uploaded_train_file = st.file_uploader("Upload Your Full Training Data (CSV)", type="csv")
-            
-            if "trained_model_state" not in st.session_state:
-                st.session_state.trained_model_state = None
-            if "trained_scaler" not in st.session_state:
-                st.session_state.trained_scaler = None
+# --- Model Training Page ---
+elif page == "Model Training":
+    st.title("🏋️ Model Training")
+    st.markdown("Re-train a model on your own data. After training, you can download the new model and data scaler files to your local machine.")
+    
+    st.sidebar.header("Training Parameters")
+    model_choice_train = st.sidebar.selectbox("Choose Model Architecture", options=list(MODELS_AVAILABLE.keys()), key="train_model_choice")
+    
+    MODEL_CONFIG["num_epochs"] = st.sidebar.number_input("Number of Epochs", min_value=1, max_value=1000, value=50)
+    MODEL_CONFIG["learning_rate"] = st.sidebar.number_input("Learning Rate", min_value=1e-6, value=0.001, format="%.5f")
+    MODEL_CONFIG["batch_size"] = st.sidebar.number_input("Batch Size", min_value=1, value=32)
+    
+    uploaded_train_file = st.file_uploader("Upload Your Full Training Data (CSV)", type="csv")
+    
+    if "trained_model_state" not in st.session_state:
+        st.session_state.trained_model_state = None
+    if "trained_scaler" not in st.session_state:
+        st.session_state.trained_scaler = None
 
-            if uploaded_train_file:
-                # Timestamp column hardcoded to "time" for training data
-                df_for_training = load_data(uploaded_train_file, timestamp_col="time")
-                if df_for_training is not None:
-                    st.write("Data Preview:")
-                    st.dataframe(df_for_training.head())
+    if uploaded_train_file:
+        # Timestamp column hardcoded to "time" for training data
+        df_for_training = load_data(uploaded_train_file, timestamp_col="time")
+        if df_for_training is not None:
+            st.write("Data Preview:")
+            st.dataframe(df_for_training.head())
+            
+            if st.button(f"Start Training for {model_choice_train}", type="primary"):
+                st.session_state.trained_model_state, st.session_state.trained_scaler = run_training(
+                    model_class=MODELS_AVAILABLE[model_choice_train]['class'],
+                    df_train=df_for_training,
+                    config=MODEL_CONFIG,
+                )
+    
+    if st.session_state.trained_model_state and st.session_state.trained_scaler:
+        with st.container(border=True):
+            st.header("Post-Training Actions")
+            
+            st.subheader("1. Download New Files Locally")
+            # Serialize model to in-memory file
+            model_buffer = io.BytesIO()
+            # Need to initialize a model instance to save its state dict correctly
+            model_class_instance = MODELS_AVAILABLE[model_choice_train]['class'](input_size=len(st.session_state.trained_scaler.feature_names_in_), **MODEL_CONFIG)
+            model_class_instance.load_state_dict(st.session_state.trained_model_state)
+            torch.save(model_class_instance.state_dict(), model_buffer)
+            model_buffer.seek(0)
+
+            # Serialize scaler to in-memory file
+            scaler_buffer = io.BytesIO()
+            joblib.dump(st.session_state.trained_scaler, scaler_buffer)
+            scaler_buffer.seek(0)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.download_button(
+                    label="📥 Download Model (.pth)",
+                    data=model_buffer,
+                    file_name=f"trained_{model_choice_train}.pth",
+                    mime="application/octet-stream"
+                )
+            with col2:
+                st.download_button(
+                    label="📥 Download Scaler (.joblib)",
+                    data=scaler_buffer,
+                    file_name="trained_scaler.joblib",
+                    mime="application/octet-stream"
+                )
+            
+            st.subheader("2. Test New Model with a Quick Forecast (No Overwrite)")
+            st.info("Upload a history CSV to see how your newly trained model performs without replacing the original files.")
+            uploaded_test_file = st.file_uploader("Upload History Data for Testing (CSV)", type="csv", key="test_new_model_file_uploader")
+            if uploaded_test_file:
+                # Timestamp column hardcoded to "time" for test data
+                df_test_history = load_data(uploaded_test_file, timestamp_col="time")
+                if df_test_history is not None and len(df_test_history) > MODEL_CONFIG["window_size"]:
+                    test_prediction_point = st.slider("Select Forecast Starting Point for Test (by index)", MODEL_CONFIG["window_size"], len(df_test_history) - 1, len(df_test_history) - 1, key="test_pred_point")
+                    targets_to_plot_test = st.multiselect("Select Targets to Plot for Test", options=MODEL_CONFIG["target_columns"], default=MODEL_CONFIG["target_columns"], key="test_targets_to_plot")
                     
-                    if st.button(f"Start Training for {model_choice_train}", type="primary"):
-                        st.session_state.trained_model_state, st.session_state.trained_scaler = run_training(
-                            model_class=MODELS_AVAILABLE[model_choice_train]['class'],
-                            df_train=df_for_training,
-                            config=MODEL_CONFIG,
-                        )
-            
-            if st.session_state.trained_model_state and st.session_state.trained_scaler:
-                with st.container(border=True):
-                    st.header("Post-Training Actions")
-                    
-                    st.subheader("1. Download New Files Locally")
-                    # Serialize model to in-memory file
-                    model_buffer = io.BytesIO()
-                    # Need to initialize a model instance to save its state dict correctly
-                    model_class_instance = MODELS_AVAILABLE[model_choice_train]['class'](input_size=len(st.session_state.trained_scaler.feature_names_in_), **MODEL_CONFIG)
-                    model_class_instance.load_state_dict(st.session_state.trained_model_state)
-                    torch.save(model_class_instance.state_dict(), model_buffer)
-                    model_buffer.seek(0)
+                    if st.button("Run Test Forecast with New Model", key="run_test_forecast_button"):
+                        with st.spinner("Running test forecast with the newly trained model..."):
+                            # Create a temporary model instance and load the trained state dict
+                            temp_model = MODELS_AVAILABLE[model_choice_train]['class'](input_size=len(st.session_state.trained_scaler.feature_names_in_), **MODEL_CONFIG)
+                            temp_model.load_state_dict(st.session_state.trained_model_state)
+                            temp_model.eval()
 
-                    # Serialize scaler to in-memory file
-                    scaler_buffer = io.BytesIO()
-                    joblib.dump(st.session_state.trained_scaler, scaler_buffer)
-                    scaler_buffer.seek(0)
-                    
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.download_button(
-                            label="📥 Download Model (.pth)",
-                            data=model_buffer,
-                            file_name=f"trained_{model_choice_train}.pth",
-                            mime="application/octet-stream"
-                        )
-                    with col2:
-                        st.download_button(
-                            label="📥 Download Scaler (.joblib)",
-                            data=scaler_buffer,
-                            file_name="trained_scaler.joblib",
-                            mime="application/octet-stream"
-                        )
-                    
-                    st.subheader("2. Test New Model with a Quick Forecast (No Overwrite)")
-                    st.info("Upload a history CSV to see how your newly trained model performs without replacing the original files.")
-                    uploaded_test_file = st.file_uploader("Upload History Data for Testing (CSV)", type="csv", key="test_new_model_file_uploader")
-                    if uploaded_test_file:
-                        # Timestamp column hardcoded to "time" for test data
-                        df_test_history = load_data(uploaded_test_file, timestamp_col="time")
-                        if df_test_history is not None and len(df_test_history) > MODEL_CONFIG["window_size"]:
-                            test_prediction_point = st.slider("Select Forecast Starting Point for Test (by index)", MODEL_CONFIG["window_size"], len(df_test_history) - 1, len(df_test_history) - 1, key="test_pred_point")
-                            targets_to_plot_test = st.multiselect("Select Targets to Plot for Test", options=MODEL_CONFIG["target_columns"], default=MODEL_CONFIG["target_columns"], key="test_targets_to_plot")
+                            history_window_df_test = df_test_history.iloc[test_prediction_point - MODEL_CONFIG["window_size"]:test_prediction_point]
+                            forecast_df_test = run_direct_forecast(temp_model, st.session_state.trained_scaler, history_window_df_test, MODEL_CONFIG)
+                            st.success("Test Forecast Complete!")
+
+                            if isinstance(df_test_history.index, pd.DatetimeIndex):
+                                forecast_start_time_test = df_test_history.index[test_prediction_point]
+                                forecast_index_test = pd.date_range(start=forecast_start_time_test, periods=len(forecast_df_test), freq='H')
+                            else:
+                                forecast_index_test = np.arange(test_prediction_point, test_prediction_point + len(forecast_df_test))
                             
-                            if st.button("Run Test Forecast with New Model", key="run_test_forecast_button"):
-                                with st.spinner("Running test forecast with the newly trained model..."):
-                                    # Create a temporary model instance and load the trained state dict
-                                    temp_model = MODELS_AVAILABLE[model_choice_train]['class'](input_size=len(st.session_state.trained_scaler.feature_names_in_), **MODEL_CONFIG)
-                                    temp_model.load_state_dict(st.session_state.trained_model_state)
-                                    temp_model.eval()
+                            forecast_df_test.index = forecast_index_test
+                            st.dataframe(forecast_df_test.head())
 
-                                    history_window_df_test = df_test_history.iloc[test_prediction_point - MODEL_CONFIG["window_size"]:test_prediction_point]
-                                    forecast_df_test = run_direct_forecast(temp_model, st.session_state.trained_scaler, history_window_df_test, MODEL_CONFIG)
-                                    st.success("Test Forecast Complete!")
-
-                                    if isinstance(df_test_history.index, pd.DatetimeIndex):
-                                        forecast_start_time_test = df_test_history.index[test_prediction_point]
-                                        forecast_index_test = pd.date_range(start=forecast_start_time_test, periods=len(forecast_df_test), freq='H')
-                                    else:
-                                        forecast_index_test = np.arange(test_prediction_point, test_prediction_point + len(forecast_df_test))
-                                    
-                                    forecast_df_test.index = forecast_index_test
-                                    st.dataframe(forecast_df_test.head())
-
-                                    for target in targets_to_plot_test:
-                                        fig_test = go.Figure()
-                                        fig_test.add_trace(go.Scatter(x=df_test_history.index, y=df_test_history[target], name=f'Historical {target}', line=dict(color='royalblue')))
-                                        fig_test.add_trace(go.Scatter(x=forecast_df_test.index, y=forecast_df_test[target], name=f'Forecasted {target}', line=dict(color='red', dash='dash')))
-                                        
-                                        vline_x_test = df_test_history.index[test_prediction_point] if isinstance(df_test_history.index, pd.DatetimeIndex) else test_prediction_point
-                                        
-                                        if isinstance(df_test_history.index, pd.DatetimeIndex):
-                                            fig_test.add_vline(x=vline_x_test, line_dash="dot", line_color="green")
-                                            fig_test.add_annotation(x=vline_x_test, y=1, yref="paper", showarrow=False, text="Forecast Start", font=dict(color="green"), xanchor="right", yanchor="bottom", yshift=5)
-                                        else:
-                                            fig_test.add_vline(x=vline_x_test, line_dash="dot", line_color="green", annotation_text="Forecast Start")
-                                        
-                                        # Add RUL/Failure point specifically for 'degradation' target in the test plot
-                                        if target == "degradation":
-                                            forecasted_degradation_test = forecast_df_test['degradation'].values
-                                            predicted_rul_test = -1
-                                            try:
-                                                predicted_rul_test = np.where(forecasted_degradation_test >= MODEL_CONFIG["degradation_threshold"])[0][0]
-                                            except IndexError:
-                                                pass # Degradation threshold not reached within forecast window
-
-                                            if predicted_rul_test != -1:
-                                                failure_point_x_test = forecast_index_test[predicted_rul_test] if isinstance(forecast_index_test, pd.DatetimeIndex) else test_prediction_point + predicted_rul_test
-                                                fig_test.add_trace(go.Scatter(x=[failure_point_x_test], y=[forecast_df_test['degradation'].iloc[predicted_rul_test]], mode='markers', marker=dict(color='purple', size=15, symbol='circle'), name=f'Predicted Failure (RUL: {predicted_rul_test} hrs)'))
-                                            fig_test.add_hline(y=MODEL_CONFIG["degradation_threshold"], line_dash="dot", line_color="orange", annotation_text="Failure Threshold")
-                                            
-                                        fig_test.update_layout(title=f"<b>TEST: {target.replace('_', ' ').title()} - History and Forecast with New Model</b>", xaxis_title="Timestamp", yaxis_title="Value")
-                                        st.plotly_chart(fig_test, use_container_width=True)
-
-                    st.subheader("3. Overwrite Original Files on Server")
-                    st.warning("This action cannot be undone. It will replace the current model and scaler used by the forecasting pages.", icon="⚠️")
-                    if st.button(f"Update original **{model_choice_train}** files", type="primary"):
-                        try:
-                            # Ensure directory exists
-                            os.makedirs("Dashboard_App", exist_ok=True)
-                            model_path = MODELS_AVAILABLE[model_choice_train]['path']
-                            scaler_path = "Dashboard_App/main_scaler.joblib"
-                            
-                            # Save the model state and scaler
-                            # Re-initialize the model to save the state dict properly
-                            model_to_save = MODELS_AVAILABLE[model_choice_train]['class'](input_size=len(st.session_state.trained_scaler.feature_names_in_), **MODEL_CONFIG)
-                            model_to_save.load_state_dict(st.session_state.trained_model_state)
-                            torch.save(model_to_save.state_dict(), model_path)
-                            joblib.dump(st.session_state.trained_scaler, scaler_path)
-                            
-                            st.success(f"Successfully updated and saved:\n- `{model_path}`\n- `{scaler_path}`")
-                            st.info("The forecasting pages will now use these new files. You may need to clear the cache and reload the page for changes to take full effect.")
-                            # Clear the cached load function to force a reload on the next page visit
-                            st.cache_resource.clear()
-
-                        except Exception as e:
-                            st.error(f"Failed to save files: {e}")
-
-
-        # --- Forecasting Pages ---
-        else: # This covers "Live RUL Prediction" and "Component Health Forecasting"
-            st.title(f"⚡ {page}")
-            st.sidebar.header("Forecast Settings")
-            model_choice = st.sidebar.selectbox("Choose a Model", options=list(MODELS_AVAILABLE.keys()))
-            
-            selected_model_info = MODELS_AVAILABLE[model_choice]
-            model, scaler = load_model_and_scaler(
-                model_path=selected_model_info["path"],
-                scaler_path="Dashboard_App/main_scaler.joblib",
-                model_class=selected_model_info["class"],
-                config=MODEL_CONFIG
-            )
-
-            if model and scaler:
-                uploaded_file = st.sidebar.file_uploader("Upload Full History CSV", type="csv")
-                if uploaded_file:
-                    df_history = load_data(uploaded_file, timestamp_col="time")
-                    
-                    if df_history is not None and len(df_history) > MODEL_CONFIG["window_size"]:
-                        max_point = len(df_history) - 1
-                        min_point = MODEL_CONFIG["window_size"]
-                        prediction_point = st.sidebar.slider("Select Forecast Starting Point (by index)", min_point, max_point, max_point, help=f"The model uses the {MODEL_CONFIG['window_size']} steps before this point.")
-
-                        if page == "Live RUL Prediction":
-                            st.markdown("Derive the **Remaining Useful Life (RUL)** by forecasting the degradation curve until it hits the failure threshold.")
-                            if st.sidebar.button("Calculate RUL", key="rul_button", type="primary"):
-                                with st.spinner(f"Forecasting with {model_choice}..."):
-                                    history_window_df = df_history.iloc[prediction_point - MODEL_CONFIG["window_size"]:prediction_point]
-                                    forecast_df = run_direct_forecast(model, scaler, history_window_df, MODEL_CONFIG)
-                                    forecasted_degradation = forecast_df['degradation'].values
+                            for target in targets_to_plot_test:
+                                fig_test = go.Figure()
+                                fig_test.add_trace(go.Scatter(x=df_test_history.index, y=df_test_history[target], name=f'Historical {target}', line=dict(color='royalblue')))
+                                fig_test.add_trace(go.Scatter(x=forecast_df_test.index, y=forecast_df_test[target], name=f'Forecasted {target}', line=dict(color='red', dash='dash')))
+                                
+                                vline_x_test = df_test_history.index[test_prediction_point] if isinstance(df_test_history.index, pd.DatetimeIndex) else test_prediction_point
+                                
+                                if isinstance(df_test_history.index, pd.DatetimeIndex):
+                                    fig_test.add_vline(x=vline_x_test, line_dash="dot", line_color="green")
+                                    fig_test.add_annotation(x=vline_x_test, y=1, yref="paper", showarrow=False, text="Forecast Start", font=dict(color="green"), xanchor="right", yanchor="bottom", yshift=5)
+                                else:
+                                    fig_test.add_vline(x=vline_x_test, line_dash="dot", line_color="green", annotation_text="Forecast Start")
+                                
+                                # Add RUL/Failure point specifically for 'degradation' target in the test plot
+                                if target == "degradation":
+                                    forecasted_degradation_test = forecast_df_test['degradation'].values
+                                    predicted_rul_test = -1
                                     try:
-                                        predicted_rul = np.where(forecasted_degradation >= MODEL_CONFIG["degradation_threshold"])[0][0]
+                                        predicted_rul_test = np.where(forecasted_degradation_test >= MODEL_CONFIG["degradation_threshold"])[0][0]
                                     except IndexError:
-                                        predicted_rul = -1
-                                    st.success("Analysis Complete!")
-                                    if predicted_rul != -1:
-                                        st.metric(label=f"Predicted RUL from selected point", value=f"{predicted_rul} Hours")
-                                    else:
-                                        st.warning(f"The component is not predicted to reach the failure threshold within the next {MODEL_CONFIG['future_steps']} hours. Its RUL is greater than the forecast window.", icon="ℹ️")
+                                        pass # Degradation threshold not reached within forecast window
 
-                                    fig = go.Figure()
-                                    # Use datetime index for plotting if available
-                                    if isinstance(df_history.index, pd.DatetimeIndex):
-                                        forecast_start_time = df_history.index[prediction_point]
-                                        forecast_index = pd.date_range(start=forecast_start_time, periods=len(forecast_df), freq='H')
-                                        failure_point_x = forecast_start_time + pd.to_timedelta(predicted_rul, unit='h') if predicted_rul != -1 else None
-                                        vline_x = forecast_start_time
-                                    else: # Fallback to integer index
-                                        forecast_index = np.arange(prediction_point, prediction_point + len(forecast_df))
-                                        failure_point_x = prediction_point + predicted_rul if predicted_rul != -1 else None
-                                        vline_x = prediction_point
-
-                                    fig.add_trace(go.Scatter(x=df_history.index, y=df_history['degradation'], name='Historical Degradation', line=dict(color='royalblue')))
-                                    fig.add_trace(go.Scatter(x=forecast_index, y=forecast_df['degradation'], name='Forecasted Degradation', line=dict(color='red', dash='dash')))
-                                    if predicted_rul != -1 and failure_point_x:
-                                        fig.add_trace(go.Scatter(x=[failure_point_x], y=[forecast_df['degradation'].iloc[predicted_rul]], mode='markers', marker=dict(color='purple', size=15, symbol='circle'), name=f'Predicted Failure (RUL: {predicted_rul} hrs)')) # Changed symbol for consistency
-                                    fig.add_hline(y=MODEL_CONFIG["degradation_threshold"], line_dash="dot", line_color="orange", annotation_text="Failure Threshold")
+                                    if predicted_rul_test != -1:
+                                        failure_point_x_test = forecast_index_test[predicted_rul_test] if isinstance(forecast_index_test, pd.DatetimeIndex) else test_prediction_point + predicted_rul_test
+                                        fig_test.add_trace(go.Scatter(x=[failure_point_x_test], y=[forecast_df_test['degradation'].iloc[predicted_rul_test]], mode='markers', marker=dict(color='purple', size=15, symbol='circle'), name=f'Predicted Failure (RUL: {predicted_rul_test} hrs)'))
+                                    fig_test.add_hline(y=MODEL_CONFIG["degradation_threshold"], line_dash="dot", line_color="orange", annotation_text="Failure Threshold")
                                     
-                                    # Conditional vline and annotation to avoid TypeError
-                                    if isinstance(df_history.index, pd.DatetimeIndex):
-                                        fig.add_vline(x=vline_x, line_dash="dot", line_color="green")
-                                        fig.add_annotation(x=vline_x, y=1, yref="paper", showarrow=False, text="Forecast Start", font=dict(color="green"), xanchor="right", yanchor="bottom", yshift=5)
-                                    else:
-                                        fig.add_vline(x=vline_x, line_dash="dot", line_color="green", annotation_text="Forecast Start")
+                                fig_test.update_layout(title=f"<b>TEST: {target.replace('_', ' ').title()} - History and Forecast with New Model</b>", xaxis_title="Timestamp", yaxis_title="Value")
+                                st.plotly_chart(fig_test, use_container_width=True)
 
-                                    fig.update_layout(title="<b>Degradation History and Forecast</b>", xaxis_title="Timestamp", yaxis_title="Degradation")
-                                    st.plotly_chart(fig, use_container_width=True)
+            st.subheader("3. Overwrite Original Files on Server")
+            st.warning("This action cannot be undone. It will replace the current model and scaler used by the forecasting pages.", icon="⚠️")
+            if st.button(f"Update original **{model_choice_train}** files", type="primary"):
+                try:
+                    # Ensure directory exists
+                    os.makedirs("Dashboard_App", exist_ok=True)
+                    model_path = MODELS_AVAILABLE[model_choice_train]['path']
+                    scaler_path = "Dashboard_App/main_scaler.joblib"
+                    
+                    # Save the model state and scaler
+                    # Re-initialize the model to save the state dict properly
+                    model_to_save = MODELS_AVAILABLE[model_choice_train]['class'](input_size=len(st.session_state.trained_scaler.feature_names_in_), **MODEL_CONFIG)
+                    model_to_save.load_state_dict(st.session_state.trained_model_state)
+                    torch.save(model_to_save.state_dict(), model_path)
+                    joblib.dump(st.session_state.trained_scaler, scaler_path)
+                    
+                    st.success(f"Successfully updated and saved:\n- `{model_path}`\n- `{scaler_path}`")
+                    st.info("The forecasting pages will now use these new files. You may need to clear the cache and reload the page for changes to take full effect.")
+                    # Clear the cached load function to force a reload on the next page visit
+                    st.cache_resource.clear()
 
-                        elif page == "Component Health Forecasting":
-                            st.markdown("Forecast the future trajectory of all target components in a single prediction.")
-                            targets_to_plot = st.sidebar.multiselect("Select Targets to Plot", options=MODEL_CONFIG["target_columns"], default=MODEL_CONFIG["target_columns"])
-                            if st.sidebar.button("Forecast Components", key="health_button", type="primary"):
-                                with st.spinner(f"Forecasting all components with {model_choice}..."):
-                                    history_window_df = df_history.iloc[prediction_point - MODEL_CONFIG["window_size"]:prediction_point]
-                                    forecast_df = run_direct_forecast(model, scaler, history_window_df, MODEL_CONFIG)
-                                    st.success("Forecast Complete!")
-                                    
-                                    # Create forecast index for plotting
-                                    if isinstance(df_history.index, pd.DatetimeIndex):
-                                        forecast_start_time = df_history.index[prediction_point]
-                                        forecast_index = pd.date_range(start=forecast_start_time, periods=len(forecast_df), freq='H')
-                                    else: # Fallback to integer index
-                                        forecast_index = np.arange(prediction_point, prediction_point + len(forecast_df))
+                except Exception as e:
+                    st.error(f"Failed to save files: {e}")
 
-                                    # Assign the new index to the forecast dataframe for easier plotting
-                                    forecast_df.index = forecast_index
-                                    st.dataframe(forecast_df.head())
 
-                                    for target in targets_to_plot:
-                                        fig = go.Figure()
-                                        fig.add_trace(go.Scatter(x=df_history.index, y=df_history[target], name=f'Historical {target}', line=dict(color='royalblue')))
-                                        fig.add_trace(go.Scatter(x=forecast_df.index, y=forecast_df[target], name=f'Forecasted {target}', line=dict(color='red', dash='dash')))
-                                        
-                                        vline_x = df_history.index[prediction_point] if isinstance(df_history.index, pd.DatetimeIndex) else prediction_point
-                                        
-                                        # Conditional vline and annotation to avoid TypeError
-                                        if isinstance(df_history.index, pd.DatetimeIndex):
-                                            fig.add_vline(x=vline_x, line_dash="dot", line_color="green")
-                                            fig.add_annotation(x=vline_x, y=1, yref="paper", showarrow=False, text="Forecast Start", font=dict(color="green"), xanchor="right", yanchor="bottom", yshift=5)
-                                        else:
-                                            fig.add_vline(x=vline_x, line_dash="dot", line_color="green", annotation_text="Forecast Start")
-                                        
-                                        fig.update_layout(title=f"<b>{target.replace('_', ' ').title()}: History and Direct Forecast</b>", xaxis_title="Timestamp", yaxis_title="Value")
-                                        st.plotly_chart(fig, use_container_width=True)
-                    else:
-                        st.info("Please upload a data file with enough history (at least `window_size` + 1 data points) and select a model using the sidebar to begin.")
-                else:
-                    st.info("Please upload a data file and select a model using the sidebar to begin.")
+# --- Forecasting Pages ---
+else:
+    st.title(f"⚡ {page}")
+    st.sidebar.header("Forecast Settings")
+    model_choice = st.sidebar.selectbox("Choose a Model", options=list(MODELS_AVAILABLE.keys()))
+    
+    # Removed timestamp_col_name input
+    # timestamp_col_name = st.sidebar.text_input("Timestamp Column Name", value="time", help="Enter the exact name of the timestamp column in your CSV.")
+    
+    selected_model_info = MODELS_AVAILABLE[model_choice]
+    model, scaler = load_model_and_scaler(
+        model_path=selected_model_info["path"],
+        scaler_path="Dashboard_App/main_scaler.joblib",
+        model_class=selected_model_info["class"],
+        config=MODEL_CONFIG
+    )
+
+    if model and scaler:
+        uploaded_file = st.sidebar.file_uploader("Upload Full History CSV", type="csv")
+        if uploaded_file:
+            # Pass the user-provided column name to the loading function, hardcoded to "time"
+            df_history = load_data(uploaded_file, timestamp_col="time")
+            
+            if df_history is not None and len(df_history) > MODEL_CONFIG["window_size"]:
+                max_point = len(df_history) - 1
+                min_point = MODEL_CONFIG["window_size"]
+                prediction_point = st.sidebar.slider("Select Forecast Starting Point (by index)", min_point, max_point, max_point, help=f"The model uses the {MODEL_CONFIG['window_size']} steps before this point.")
+
+                if page == "Live RUL Prediction":
+                    st.markdown("Derive the **Remaining Useful Life (RUL)** by forecasting the degradation curve until it hits the failure threshold.")
+                    if st.sidebar.button("Calculate RUL", key="rul_button", type="primary"):
+                        with st.spinner(f"Forecasting with {model_choice}..."):
+                            history_window_df = df_history.iloc[prediction_point - MODEL_CONFIG["window_size"]:prediction_point]
+                            forecast_df = run_direct_forecast(model, scaler, history_window_df, MODEL_CONFIG)
+                            forecasted_degradation = forecast_df['degradation'].values
+                            try:
+                                predicted_rul = np.where(forecasted_degradation >= MODEL_CONFIG["degradation_threshold"])[0][0]
+                            except IndexError:
+                                predicted_rul = -1
+                            st.success("Analysis Complete!")
+                            if predicted_rul != -1:
+                                st.metric(label=f"Predicted RUL from selected point", value=f"{predicted_rul} Hours")
+                            else:
+                                st.warning(f"The component is not predicted to reach the failure threshold within the next {MODEL_CONFIG['future_steps']} hours. Its RUL is greater than the forecast window.", icon="ℹ️")
+
+                            fig = go.Figure()
+                            # Use datetime index for plotting if available
+                            if isinstance(df_history.index, pd.DatetimeIndex):
+                                forecast_start_time = df_history.index[prediction_point]
+                                forecast_index = pd.date_range(start=forecast_start_time, periods=len(forecast_df), freq='H')
+                                failure_point_x = forecast_start_time + pd.to_timedelta(predicted_rul, unit='h') if predicted_rul != -1 else None
+                                vline_x = forecast_start_time
+                            else: # Fallback to integer index
+                                forecast_index = np.arange(prediction_point, prediction_point + len(forecast_df))
+                                failure_point_x = prediction_point + predicted_rul if predicted_rul != -1 else None
+                                vline_x = prediction_point
+
+                            fig.add_trace(go.Scatter(x=df_history.index, y=df_history['degradation'], name='Historical Degradation', line=dict(color='royalblue')))
+                            fig.add_trace(go.Scatter(x=forecast_index, y=forecast_df['degradation'], name='Forecasted Degradation', line=dict(color='red', dash='dash')))
+                            if predicted_rul != -1 and failure_point_x:
+                                fig.add_trace(go.Scatter(x=[failure_point_x], y=[forecast_df['degradation'].iloc[predicted_rul]], mode='markers', marker=dict(color='purple', size=15, symbol='circle'), name=f'Predicted Failure (RUL: {predicted_rul} hrs)')) # Changed symbol for consistency
+                            fig.add_hline(y=MODEL_CONFIG["degradation_threshold"], line_dash="dot", line_color="orange", annotation_text="Failure Threshold")
+                            
+                            # Conditional vline and annotation to avoid TypeError
+                            if isinstance(df_history.index, pd.DatetimeIndex):
+                                fig.add_vline(x=vline_x, line_dash="dot", line_color="green")
+                                fig.add_annotation(x=vline_x, y=1, yref="paper", showarrow=False, text="Forecast Start", font=dict(color="green"), xanchor="right", yanchor="bottom", yshift=5)
+                            else:
+                                fig.add_vline(x=vline_x, line_dash="dot", line_color="green", annotation_text="Forecast Start")
+
+                            fig.update_layout(title="<b>Degradation History and Forecast</b>", xaxis_title="Timestamp", yaxis_title="Degradation")
+                            st.plotly_chart(fig, use_container_width=True)
+
+                elif page == "Component Health Forecasting":
+                    st.markdown("Forecast the future trajectory of all target components in a single prediction.")
+                    targets_to_plot = st.sidebar.multiselect("Select Targets to Plot", options=MODEL_CONFIG["target_columns"], default=MODEL_CONFIG["target_columns"])
+                    if st.sidebar.button("Forecast Components", key="health_button", type="primary"):
+                        with st.spinner(f"Forecasting all components with {model_choice}..."):
+                            history_window_df = df_history.iloc[prediction_point - MODEL_CONFIG["window_size"]:prediction_point]
+                            forecast_df = run_direct_forecast(model, scaler, history_window_df, MODEL_CONFIG)
+                            st.success("Forecast Complete!")
+                            
+                            # Create forecast index for plotting
+                            if isinstance(df_history.index, pd.DatetimeIndex):
+                                forecast_start_time = df_history.index[prediction_point]
+                                forecast_index = pd.date_range(start=forecast_start_time, periods=len(forecast_df), freq='H')
+                            else: # Fallback to integer index
+                                forecast_index = np.arange(prediction_point, prediction_point + len(forecast_df))
+
+                            # Assign the new index to the forecast dataframe for easier plotting
+                            forecast_df.index = forecast_index
+                            st.dataframe(forecast_df.head())
+
+                            for target in targets_to_plot:
+                                fig = go.Figure()
+                                fig.add_trace(go.Scatter(x=df_history.index, y=df_history[target], name=f'Historical {target}', line=dict(color='royalblue')))
+                                fig.add_trace(go.Scatter(x=forecast_df.index, y=forecast_df[target], name=f'Forecasted {target}', line=dict(color='red', dash='dash')))
+                                
+                                vline_x = df_history.index[prediction_point] if isinstance(df_history.index, pd.DatetimeIndex) else prediction_point
+                                
+                                # Conditional vline and annotation to avoid TypeError
+                                if isinstance(df_history.index, pd.DatetimeIndex):
+                                    fig.add_vline(x=vline_x, line_dash="dot", line_color="green")
+                                    fig.add_annotation(x=vline_x, y=1, yref="paper", showarrow=False, text="Forecast Start", font=dict(color="green"), xanchor="right", yanchor="bottom", yshift=5)
+                                else:
+                                    fig.add_vline(x=vline_x, line_dash="dot", line_color="green", annotation_text="Forecast Start")
+                                
+                                fig.update_layout(title=f"<b>{target.replace('_', ' ').title()}: History and Direct Forecast</b>", xaxis_title="Timestamp", yaxis_title="Value")
+                                st.plotly_chart(fig, use_container_width=True)
             else:
-                st.error("Could not load the selected model and/or scaler. Please check the file paths and ensure the correct files exist in the `Dashboard_App` directory.")
+                st.info("Please upload a data file with enough history (at least `window_size` + 1 data points) and select a model using the sidebar to begin.")
+        else:
+            st.info("Please upload a data file and select a model using the sidebar to begin.")
     else:
-        print("Streamlit UI logic skipped because READTHEDOCS is set to True.")
-
-
-# This block ensures that run_streamlit_app() is only called when
-# the script is executed directly (e.g., by 'streamlit run' or 'python -m Dashboard_App.app').
-# It will NOT be called when Sphinx imports the module for documentation.
-if __name__ == "__main__":
-    run_streamlit_app()
+        st.error("Could not load the selected model and/or scaler. Please check the file paths and ensure the correct files exist in the `Dashboard_App` directory.")
