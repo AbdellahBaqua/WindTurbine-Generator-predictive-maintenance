@@ -4,7 +4,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os;
 import sys;
-sys.setrecursionlimit(5000)
+sys.setrecursionlimit(1500)
 sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 project = 'Controlit'

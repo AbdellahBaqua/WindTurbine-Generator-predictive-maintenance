@@ -8,7 +8,6 @@ This project provides a comprehensive solution for the predictive maintenance of
 .. toctree::
    :maxdepth: 2
    :caption: User Guide
-   :hidden:
 
    installation
    usage
@@ -17,13 +16,11 @@ This project provides a comprehensive solution for the predictive maintenance of
 .. toctree::
    :maxdepth: 2
    :caption: Technical Documentation
-   :hidden:
    
    app
    timeforecasting
    modelstesting
    modules
-
 
 Indices and Tables
 ------------------
