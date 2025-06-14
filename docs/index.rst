@@ -21,6 +21,7 @@ This project provides a comprehensive solution for the predictive maintenance of
    timeforecasting
    modelstesting
    modules
+   api
 
 Indices and Tables
 ------------------
