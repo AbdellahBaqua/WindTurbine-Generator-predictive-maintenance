@@ -19,4 +19,4 @@ dependencies = [
 [tool.setuptools]
 packages = ["app", "forecast", "Dashboard_App"]
 
-[tool.setuptools] 
+ 
