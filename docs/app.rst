@@ -1,6 +1,14 @@
 Direct Forecast Dashboard Documentation
-=====================================
+======================================
 
+Key Features
+------------
+
+Code Structure
+--------------
+
+Error Handling
+--------------
 .. toctree::
    :maxdepth: 2
    :caption: Related Documentation:
@@ -8,9 +16,9 @@ Direct Forecast Dashboard Documentation
    installation.rst
    usage.rst
    preprocessing.rst
-   modetesting1.rst
+   modelstesting.rst
    timeforecasting.rst
-   utils.rst
+   
    modules.rst
 
 Overview

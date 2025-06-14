@@ -1,6 +1,10 @@
 Usage
 =====
 
+
+Overview
+-----------------------
+
 This section explains how to run the project and interact with it using your webcam.
 
 Running the Application

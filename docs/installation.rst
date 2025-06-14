@@ -3,6 +3,10 @@
 Installation Guide
 =================
 
+Description
+-------------------
+
+
 This guide covers how to install Controlit and its dependencies.
 
 System Requirements

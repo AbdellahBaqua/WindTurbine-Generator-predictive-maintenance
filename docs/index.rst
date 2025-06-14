@@ -1,41 +1,24 @@
 .. Controlit documentation master file
-
 Welcome to Controlit's Documentation!
 ====================================
 
+Technical Reference
+-------------------
 .. toctree::
    :maxdepth: 2
    :caption: Core Documentation
-   :hidden:
-
+   
    app.rst
    modules.rst
+   modelstesting.rst
 
 .. toctree::
    :maxdepth: 2
    :caption: User Guide
-   :hidden:
-
+   
    installation.rst
    usage.rst
    preprocessing.rst
-   timeforecasting.rst
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Development
-   :hidden:
-
-   modelstesting.rst
-   requirements.rst
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Configuration
-   :hidden:
-
-   config.rst
-   make.bat
 
 Introduction
 ------------
