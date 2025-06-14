@@ -2,8 +2,10 @@
 #
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
+import os;
 import sys;
 sys.setrecursionlimit(5000)
+sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 project = 'Controlit'
 copyright = '2025, Controlit'

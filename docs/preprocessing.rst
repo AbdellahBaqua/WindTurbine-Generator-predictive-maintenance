@@ -1,8 +1,8 @@
 Wind Turbine Degradation Simulator Documentation
-==============================================
+================================================
 
 Overview
---------
+------------
 
 This Python-based simulator models the degradation process of wind turbine components under various operational conditions. It calculates:
 
@@ -13,7 +13,7 @@ This Python-based simulator models the degradation process of wind turbine compo
 The tool processes time-series sensor data to predict component lifespan and visualize degradation patterns.
 
 Key Features
-------------
+----------------
 
 * **Physics-Based Modeling**:
     * Calculates rotor RPM, torque, and power coefficient from wind speed
@@ -32,7 +32,7 @@ Key Features
     * Highlights maintenance events on degradation curves
 
 Code Structure
--------------
+------------------
 
 1. **Core Class: WindTurbineDegradationSimulator**
 
@@ -114,7 +114,7 @@ Code Structure
     * Cycle factor impact
 
 Physics Models
--------------
+------------------
 
 **Power Coefficient (Cp) Calculation**:
 
@@ -145,7 +145,7 @@ With temperature acceleration:
    new_degradation = current_degradation × (1 - maintenance_effectiveness)
 
 Usage Examples
--------------
+------------------
 
 1. **With Real Data**
 
@@ -174,7 +174,7 @@ Usage Examples
    simulator.params['air_density'] = 1.1  # High-altitude adjustment
 
 Input/Output Specifications
---------------------------
+-------------------------------
 
 **Expected Input Columns**:
 
@@ -212,7 +212,7 @@ Input/Output Specifications
 * ``time_since_last_maintenance``: Steps since last repair
 
 Error Handling
--------------
+------------------
 
 * **Missing Wind Data**: Raises ValueError if no speed data detected
 * **File Errors**: Falls back to synthetic data if CSV loading fails
@@ -220,7 +220,7 @@ Error Handling
 * **Visualization**: Gracefully handles missing data columns in plots
 
 Maintenance Logic
-----------------
+---------------------
 
 * **Triggers When**:
     * Degradation ≥ ``maintenance_threshold`` (default: 0.8)
