@@ -1,5 +1,5 @@
 Direct Forecast Dashboard Documentation
-======================================
+=======================================
 
 .. currentmodule:: app
 
