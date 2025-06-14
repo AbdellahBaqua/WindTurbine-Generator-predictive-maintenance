@@ -1,14 +1,14 @@
-hand-gesture-recognition-mediapipe-main
-=======================================
+Modules
+=======
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
+   :caption: Application Modules
 
    app
-   installation
+   timeforecasting
    modelstesting
    preprocessing
-   timeforecasting
 
 .. automodule:: forecast.utils
    :members:

@@ -17,9 +17,6 @@ This project provides a comprehensive solution for the predictive maintenance of
    :maxdepth: 2
    :caption: Technical Documentation
    
-   app
-   timeforecasting
-   modelstesting
    modules
    api
 

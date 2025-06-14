@@ -4,7 +4,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os;
 import sys;
-sys.setrecursionlimit(2000)
+sys.setrecursionlimit(3000)
 sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 project = 'Controlit'
@@ -20,7 +20,9 @@ extensions = [
     'myst_parser',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon'  # For Google-style docstrings
+    'sphinx.ext.napoleon',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.autosummary',
 ]
 
 # Source file handling
@@ -87,10 +89,10 @@ html_show_sourcelink = False
 # Optimize build performance
 nitpicky = False  # Only set to True if you want to be strict about warnings
 
-# Add these settings to help with module imports
+# Add these settings to help with module imports and documentation
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))  # Add project root to Python path
+sys.path.insert(0, os.path.abspath('..'))
 
 # Configure autodoc
 autodoc_mock_imports = [
@@ -101,8 +103,11 @@ autodoc_mock_imports = [
     'torch',
     'streamlit',
     'plotly',
-    # Add other external dependencies your project uses
 ]
 
-# Disable nitpicky mode to reduce warnings
+# Disable nitpicky mode
 nitpicky = False
+
+# Add these to help with toctree issues
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

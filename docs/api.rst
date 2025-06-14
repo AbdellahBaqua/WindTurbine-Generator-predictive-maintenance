@@ -1,17 +1,23 @@
 API Reference
 ============
 
-.. module:: app
-   :synopsis: Main application module
+.. currentmodule:: app
 
-.. autofunction:: app.load_data
-.. autofunction:: app.preprocess_data
-.. autofunction:: app.load_model
-.. autofunction:: app.predict
-.. autofunction:: app.inverse_transform
-.. autofunction:: app.plot_forecast
+.. autosummary::
+   :toctree: _autosummary
+   :template: module.rst
 
-.. module:: forecast.utils
-   :synopsis: Utility functions for forecasting
+   load_data
+   preprocess_data
+   load_model
+   predict
+   inverse_transform
+   plot_forecast
 
-.. autofunction:: forecast.utils.load_data 
+.. currentmodule:: forecast.utils
+
+.. autosummary::
+   :toctree: _autosummary
+   :template: module.rst
+
+   load_data 

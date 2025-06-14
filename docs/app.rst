@@ -1,6 +1,57 @@
 Direct Forecast Dashboard Documentation
 ======================================
 
+.. currentmodule:: app
+
+Overview
+--------
+The Direct Forecast Dashboard provides real-time monitoring and forecasting capabilities for wind turbine generators.
+
+Key Features
+-----------
+* Real-time data monitoring
+* Advanced forecasting
+* Interactive visualizations
+* Predictive maintenance alerts
+
+API Reference
+------------
+
+.. autofunction:: load_data
+   :noindex:
+
+.. autofunction:: preprocess_data
+   :noindex:
+
+.. autofunction:: load_model
+   :noindex:
+
+.. autofunction:: predict
+   :noindex:
+
+.. autofunction:: inverse_transform
+   :noindex:
+
+.. autofunction:: plot_forecast
+   :noindex:
+
+Code Structure
+-------------
+The application is organized into several key components:
+
+* Data Loading and Preprocessing
+* Model Management
+* Prediction Pipeline
+* Visualization Tools
+
+Error Handling
+-------------
+The application includes comprehensive error handling for:
+
+* Data loading and validation
+* Model loading and prediction
+* Visualization generation
+
 Key Features
 ------------
 
@@ -20,14 +71,6 @@ Error Handling
    timeforecasting.rst
    
    modules.rst
-
-Overview
---------
-
-This Streamlit-based dashboard provides predictive maintenance capabilities using a Bidirectional LSTM (BiLSTM) deep learning model. It forecasts:
-
-* Remaining Useful Life (RUL) of a component by predicting when degradation will cross a failure threshold.
-* Multi-variable forecasts (degradation, temperature, maintenance time) for component health monitoring.
 
 For installation instructions, see :doc:`installation`. For usage examples, refer to :doc:`usage`.
 
