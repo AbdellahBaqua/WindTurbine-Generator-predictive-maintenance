@@ -9,7 +9,8 @@ build:
       - pip install --upgrade pip
       - pip install -r docs/requirements.txt
     build:
-      - sphinx-build -b html docs/ docs/_build/html -j auto
+      commands:
+        - sphinx-build -b html docs/ docs/_build/html -j auto
 
 python:
   install:
