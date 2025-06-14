@@ -1,7 +1,7 @@
 API Reference
 ============
 
-.. currentmodule:: app
+.. currentmodule:: Dashboard_App.app
 
 .. autosummary::
    :toctree: _autosummary
