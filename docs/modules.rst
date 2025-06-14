@@ -5,7 +5,7 @@ hand-gesture-recognition-mediapipe-main
    :maxdepth: 4
 
    app
-   apptest
-   apptest2
-   model
-   utils
+   installation
+   modelstesting
+   preprocessing
+   timeforecasting

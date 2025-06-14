@@ -1,90 +1,99 @@
-Installation
-============
+.. _installation:
 
-This guide will help you set up the environment to run the Hand Gesture Controlled Face Recognition System.
+Installation Guide
+=================
 
-Requirements
-------------
+This guide covers how to install Controlit and its dependencies.
 
-Before running the project, ensure you have the following installed:
+System Requirements
+-------------------
 
-- Python 3.8+
-- pip (Python package installer)
-- Git (optional, to clone the repository)
+* Python 3.8 or higher
+* pip 20.0 or higher
+* (Optional) CUDA 11.1+ for GPU acceleration
+
+Installation Methods
+-------------------
+
+1. Using pip (recommended)
+-------------------------
+
+.. code-block:: bash
+
+   # Create and activate virtual environment (recommended)
+   python -m venv controlit-env
+   source controlit-env/bin/activate  # Linux/MacOS
+   controlit-env\Scripts\activate    # Windows
+
+   # Install Controlit package
+   pip install controlit
+
+2. From source
+--------------
+
+.. code-block:: bash
+
+   # Clone the repository
+   git clone https://github.com/yourusername/controlit.git
+   cd controlit
+
+   # Install with dependencies
+   pip install -r requirements.txt
+   pip install -e .
 
 Dependencies
 ------------
 
-The project uses the following libraries:
+Core requirements:
 
-- `opencv-python` – for video capture and image processing
-- `face_recognition` – for facial recognition
-- `mediapipe` – for hand gesture detection
-- `numpy` – for array and matrix operations
-- `dlib` – used by face_recognition internally (requires CMake and build tools)
-- `imutils` – image utilities for OpenCV
+* NumPy >=1.20.0
+* Pandas >=1.3.0
+* PyTorch >=1.10.0
+* Streamlit >=1.0.0
 
-Installation Steps
-------------------
+Optional dependencies:
 
-1. **Clone the Repository (Optional)**
+* CUDA Toolkit (for GPU support)
+* Nvidia drivers (for GPU support)
 
-   If you haven't already:
+Verifying Installation
+---------------------
 
-   .. code-block:: bash
+Run the test command to verify installation:
 
-      git clone https://github.com/yourusername/yourproject.git
-      cd yourproject
+.. code-block:: bash
 
-2. **Set Up a Virtual Environment (Recommended)**
-
-   .. code-block:: bash
-
-      python -m venv venv
-      source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-3. **Install Required Packages**
-
-   .. code-block:: bash
-
-      pip install -r requirements.txt
-
-   If you don’t have a `requirements.txt`, install manually:
-
-   .. code-block:: bash
-
-      pip install opencv-python face_recognition mediapipe numpy imutils
-
-   **Note:** Installing `face_recognition` may require `cmake`, `dlib`, and build tools:
-
-   .. code-block:: bash
-
-      pip install cmake
-      pip install dlib
-
-   On Linux, you may need:
-
-   .. code-block:: bash
-
-      sudo apt-get install build-essential cmake
-      sudo apt-get install libboost-all-dev
-
-4. **Test the Installation**
-
-   Run the main script to ensure the webcam opens and modules work:
-
-   .. code-block:: bash
-
-      python main.py
+   python -c "import controlit; print(controlit.__version__)"
 
 Troubleshooting
 ---------------
 
-- If `face_recognition` fails to install, make sure you have a C++ compiler and CMake installed.
-- On Windows, install [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-- Make sure your webcam is connected and not being used by another app.
+Common issues:
+
+1. **Permission errors**:
+   Use ``--user`` flag or virtual environments
+
+   .. code-block:: bash
+
+      pip install --user controlit
+
+2. **Missing dependencies**:
+   Manually install required packages
+
+   .. code-block:: bash
+
+      pip install numpy pandas torch
+
+3. **CUDA issues**:
+   Install PyTorch with CUDA support:
+
+   .. code-block:: bash
+
+      pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
 
 Next Steps
 ----------
 
-Continue to :doc:`usage` to learn how to interact with the system using hand gestures.
+* :doc:`Get started with basic usage <usage>`
+* :doc:`Learn about preprocessing data <preprocessing>`
+* :doc:`Explore time series forecasting <timeforecasting>`

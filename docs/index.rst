@@ -10,7 +10,6 @@ Welcome to Controlit's Documentation!
 
    app.rst
    modules.rst
-   utils.rst
 
 .. toctree::
    :maxdepth: 2
@@ -65,7 +64,6 @@ Technical Reference
 ------------------
 
 * :doc:`Application Structure <app>`
-* :doc:`Utility Functions <utils>`
 * :doc:`System Requirements <requirements>`
 
 Indices and Tables
